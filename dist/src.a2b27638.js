@@ -117,66 +117,144 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
-var bundleURL = null;
-function getBundleURLCached() {
-  if (!bundleURL) {
-    bundleURL = getBundleURL();
-  }
-  return bundleURL;
-}
-function getBundleURL() {
-  // Attempt to find the URL of the current script and use that as the base URL
-  try {
-    throw new Error();
-  } catch (err) {
-    var matches = ('' + err.stack).match(/(https?|file|ftp|chrome-extension|moz-extension):\/\/[^)\n]+/g);
-    if (matches) {
-      return getBaseURL(matches[0]);
-    }
-  }
-  return '/';
-}
-function getBaseURL(url) {
-  return ('' + url).replace(/^((?:https?|file|ftp|chrome-extension|moz-extension):\/\/.+)?\/[^/]+(?:\?.*)?$/, '$1') + '/';
-}
-exports.getBundleURL = getBundleURLCached;
-exports.getBaseURL = getBaseURL;
-},{}],"node_modules/parcel-bundler/src/builtins/css-loader.js":[function(require,module,exports) {
-var bundle = require('./bundle-url');
-function updateLink(link) {
-  var newLink = link.cloneNode();
-  newLink.onload = function () {
-    link.remove();
-  };
-  newLink.href = link.href.split('?')[0] + '?' + Date.now();
-  link.parentNode.insertBefore(newLink, link.nextSibling);
-}
-var cssTimeout = null;
-function reloadCSS() {
-  if (cssTimeout) {
-    return;
-  }
-  cssTimeout = setTimeout(function () {
-    var links = document.querySelectorAll('link[rel="stylesheet"]');
-    for (var i = 0; i < links.length; i++) {
-      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
-        updateLink(links[i]);
-      }
-    }
-    cssTimeout = null;
-  }, 50);
-}
-module.exports = reloadCSS;
-},{"./bundle-url":"node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"src/styles.css":[function(require,module,exports) {
-var reloadCSS = require('_css_loader');
-module.hot.dispose(reloadCSS);
-module.hot.accept(reloadCSS);
-},{"_css_loader":"node_modules/parcel-bundler/src/builtins/css-loader.js"}],"src/index.js":[function(require,module,exports) {
-"use strict";
+})({"src/index.js":[function(require,module,exports) {
+var ball = document.getElementById("ball");
+ball.style.top = ball.offsetTop + "px";
+ball.style.left = ball.offsetLeft + "px";
 
-require("./styles.css");
-},{"./styles.css":"src/styles.css"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+// If you want dynamic change in values of ball height and width uncomment the below 'onresize' code.
+var ballHeight = ball.offsetHeight;
+var ballWidth = ball.offsetWidth;
+
+// /*
+window.onresize = function (e) {
+  ballHeight = ball.offsetHeight;
+  ballWidth = ball.offsetWidth;
+};
+// */
+
+function setValue(value) {
+  return value + "px";
+}
+
+// When using event.keyCode;
+function keyCode(keyPress) {
+  var top = parseInt(ball.style.top);
+  var left = parseInt(ball.style.left);
+
+  // W is pressed
+  if (keyPress === 119 || keyPress === 87) {
+    if (top > 5) {
+      ball.style.top = setValue(top - 5);
+    }
+  }
+
+  // A is pressed
+  else if (keyPress === 97 || keyPress === 65) {
+    if (left > 5) {
+      ball.style.left = setValue(left - 5);
+    }
+  }
+
+  // S is pressed
+  else if (keyPress === 115 || keyPress === 83) {
+    if (top < window.innerHeight - ballHeight - 5) {
+      ball.style.top = setValue(top + 5);
+    }
+  }
+
+  // D is pressed
+  else if (keyPress === 100 || keyPress === 68) {
+    if (left < window.innerWidth - ballWidth - 5) {
+      ball.style.left = setValue(left + 5);
+    }
+  }
+}
+
+/*
+//When using event.key;
+function key(keyPress) {
+    
+    var top = parseInt(ball.style.top);
+    var left = parseInt(ball.style.left);
+
+    // W is pressed
+    if (keyPress === "w" || keyPress === "W") {
+        if (top > 5) {
+            ball.style.top = setValue(top - 5);
+        }
+    }
+
+    // A is pressed
+    else if (keyPress === "a" || keyPress === "A") {
+        if (left > 5) {
+            ball.style.left = setValue(left - 5);
+        }
+    }
+
+    // S is pressed
+    else if (keyPress === "s" || keyPress === "S") {
+        if (top < (window.innerHeight - ballHeight) - 5) {
+            ball.style.top = setValue(top + 5);
+        }
+    }
+
+    // D is pressed
+    else if (keyPress === "d" || keyPress === "D") {
+        if (left < (window.innerWidth - ballWidth) - 5) {
+            ball.style.left = setValue(left + 5);
+        }
+    }
+
+};
+*/
+
+/*
+//When using event.code;
+function code(keyPress) {
+    
+    console.log(keyPress);
+
+    var top = parseInt(ball.style.top);
+    var left = parseInt(ball.style.left);
+
+    // W is pressed
+    if (keyPress === "KeyW") {
+        if (top > 5) {
+            ball.style.top = setValue(top - 5);
+        }
+    }
+
+    // A is pressed
+    else if (keyPress === "KeyA") {
+        if (left > 5) {
+            ball.style.left = setValue(left - 5);
+        }
+    }
+
+    // S is pressed
+    else if (keyPress === "KeyS") {
+        if (top < (window.innerHeight - ballHeight) - 5) {
+            ball.style.top = setValue(top + 5);
+        }
+    }
+
+    // D is pressed
+    else if (keyPress === "KeyD") {
+        if (left < (window.innerWidth - ballWidth) - 5) {
+            ball.style.left = setValue(left + 5);
+        }
+    }
+
+};
+*/
+
+window.addEventListener("keypress", function (event) {
+  //    code(event.code); //- You can use this
+  //    key(event.key); //- You can also use this
+  keyCode(event.keyCode);
+});
+},{}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
